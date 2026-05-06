@@ -1,1 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python Crash Course — 4-Track MIT Method</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#09090b;--s1:#111113;--border:#1e1e22;--tx:#fafafa;--t2:#a0a0ab;--t3:#52525b;--mono:'JetBrains Mono',monospace;--serif:'Instrument Serif',serif;--font:'DM Sans',sans-serif}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100vh}
+.hero{max-width:960px;margin:0 auto;padding:80px 32px 56px;text-align:center}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:24px}
+h1{font-family:var(--serif);font-size:clamp(44px,6vw,80px);line-height:1.08;margin-bottom:20px;font-weight:400}
+h1 em{font-style:italic;opacity:.6}
+.sub{font-size:17px;color:var(--t2);line-height:1.7;max-width:540px;margin:0 auto 36px}
+.mit-strip{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--t3);background:var(--s1)}
+.mit-dot{width:6px;height:6px;border-radius:50%;background:#A31F34;flex-shrink:0}
 
+/* Methods */
+.methods{background:var(--s1);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:40px 32px}
+.methods-inner{max-width:960px;margin:0 auto}
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:20px;display:block}
+.methods-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.method-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;transition:border-color .2s}
+.method-card:hover{border-color:#333}
+.m-icon{font-size:20px;margin-bottom:8px}
+.m-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.m-who{font-size:11px;color:var(--t3);margin-bottom:6px;font-family:var(--mono)}
+.m-desc{font-size:12px;color:var(--t2);line-height:1.5}
+
+/* Tracks */
+.tracks{max-width:960px;margin:0 auto;padding:56px 32px}
+.track-card{border:1px solid var(--border);border-radius:14px;margin-bottom:16px;overflow:hidden;display:flex;transition:border-color .25s,box-shadow .25s;background:var(--s1)}
+.track-card:hover{border-color:#333;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.track-stripe{width:5px;flex-shrink:0}
+.ts1{background:#ff6b35}.ts2{background:#00d4ff}.ts3{background:#b400ff}.ts4{background:#00e676}
+.track-body{padding:24px 28px;flex:1}
+.track-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px}
+.track-meta{flex:1}
+.track-num{font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:4px;letter-spacing:.08em;text-transform:uppercase}
+.track-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.track-sub{font-size:13px;color:var(--t2)}
+.open-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap;transition:all .15s;border:1px solid var(--border);color:var(--t2);background:none;font-family:var(--font)}
+.open-btn:hover{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.track-desc{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px}
+.pill-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.pill{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--t3);font-family:var(--mono)}
+.mod-row{display:flex;flex-wrap:wrap;gap:6px}
+.mod{font-size:11px;padding:3px 10px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--t2)}
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;border:1px solid}
+.b1{background:rgba(76,201,240,.08);color:#4cc9f0;border-color:rgba(76,201,240,.2)}
+.b2{background:rgba(255,210,63,.08);color:#ffd23f;border-color:rgba(255,210,63,.2)}
+.b3{background:rgba(6,255,165,.08);color:#06ffa5;border-color:rgba(6,255,165,.2)}
+.b4{background:rgba(255,107,157,.08);color:#ff6b9d;border-color:rgba(255,107,157,.2)}
+.b5{background:rgba(255,171,0,.08);color:#ffab00;border-color:rgba(255,171,0,.2)}
+
+/* Path */
+.path{max-width:960px;margin:0 auto;padding:0 32px 64px}
+.path-row{display:flex;align-items:center;gap:0;margin-top:20px}
+.path-step{flex:1;text-align:center;position:relative}
+.path-circle{width:48px;height:48px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid var(--border);background:var(--s1);position:relative;z-index:1;transition:all .2s}
+.pc1{border-color:#ff6b35!important}.pc2{border-color:#00d4ff!important}.pc3{border-color:#b400ff!important}.pc4{border-color:#00e676!important}
+.path-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.path-sub{font-size:11px;color:var(--t3)}
+.path-line{height:2px;background:var(--border);flex:0 0 40px}
+footer{text-align:center;padding:32px;border-top:1px solid var(--border);font-size:12px;color:var(--t3)}
+footer span{color:var(--t2)}
+@media(max-width:640px){.methods-grid{grid-template-columns:1fr 1fr}.track-top{flex-direction:column}.open-btn{width:100%;justify-content:center}.path-row{flex-wrap:wrap;gap:16px}.path-line{display:none}}
+</style>
+<script>
+// ─── Auth Guard ────────────────────────────────────────────────
+const AUTH_SESSION_KEY='py_session';
+(function(){
+  try{
+    const s=JSON.parse(sessionStorage.getItem(AUTH_SESSION_KEY));
+    if(!s||Date.now()-s.loginTime>8*60*60*1000){window.location.href='login.html';}
+    else{
+      document.addEventListener('DOMContentLoaded',()=>{
+        const bar=document.getElementById('auth-bar');
+        const isAdmin=s.role==='admin';
+        bar.innerHTML=`
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:14px">🐍</span>
+            <span style="font-size:14px;font-weight:700;color:#f1f5fd">Python Crash Course</span>
+            <span style="font-size:11px;color:#3d4f6b;font-family:monospace">MIT Method · 4 Tracks</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            ${isAdmin?'<a href="admin.html" style="display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;color:#8b5cf6;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);text-decoration:none;cursor:pointer;font-family:inherit">🛡️ Admin Panel</a>':''}
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px">
+              <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4f8ef7,#818cf8);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">${s.name.charAt(0).toUpperCase()}</div>
+              <div><div style="font-size:12px;font-weight:600;color:#f1f5fd">${s.name}</div><div style="font-size:10px;color:#3d4f6b;font-family:monospace">${s.role}</div></div>
+            </div>
+            <button onclick="sessionStorage.removeItem('py_session');window.location.href='login.html'" style="display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;color:#f43f5e;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);cursor:pointer;font-family:inherit">⏻ Sign Out</button>
+          </div>`;
+      });
+    }
+  }catch(e){window.location.href='login.html';}
+})();
+</script>
+</head>
+<body>
+<div id="auth-bar" style="height:54px;background:rgba(9,9,11,.95);backdrop-filter:blur(16px);border-bottom:1px solid #1e1e22;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100;font-family:'DM Sans',sans-serif"></div>
+<div class="hero">
+  <div class="eyebrow">4-Track Python Crash Course · MIT Open Learning Method</div>
+  <h1>Learn Python.<br><em>The MIT way.</em></h1>
+  <p class="sub">Four complete, interactive courses — Beginner through Applications. Each module uses MIT award-winning teaching techniques: live walkthroughs, scaffolded steps, flipped learning, and real data.</p>
+  <div class="mit-strip"><div class="mit-dot"></div>Inspired by MIT Open Learning · Teaching with Digital Technology Awards</div>
+</div>
+
+<div class="methods">
+<div class="methods-inner">
+  <span class="section-label">4 MIT Teaching Methods Applied Throughout</span>
+  <div class="methods-grid">
+    <div class="method-card"><div class="m-icon">🎥</div><div class="m-name">Live Walkthrough</div><div class="m-who">Egozy Method · 2025</div><div class="m-desc">See the thought process in real time — not just the final code. Decisions made visible.</div></div>
+    <div class="method-card"><div class="m-icon">🧩</div><div class="m-name">Scaffolded Steps</div><div class="m-who">Bazant Method · MITx</div><div class="m-desc">Break every problem into numbered steps with unlockable hints. Rigor without frustration.</div></div>
+    <div class="method-card"><div class="m-icon">🔄</div><div class="m-name">Flipped Learning</div><div class="m-who">Demaine Method · 2019</div><div class="m-desc">Concept first, challenge after. Study time is for doing — not just watching.</div></div>
+    <div class="method-card"><div class="m-icon">⚡</div><div class="m-name">Real Data</div><div class="m-who">Noe Method · 2025</div><div class="m-desc">Every example uses real, manipulable data. Students feel relevance immediately.</div></div>
+  </div>
+</div>
+</div>
+
+<div class="tracks">
+  <span class="section-label">4 Courses — Open Each in its Own Tab</span>
+
+  <div class="track-card">
+    <div class="track-stripe ts1"></div>
+    <div class="track-body">
+      <div class="track-top">
+        <div class="track-meta">
+          <div class="track-num">Track 01 · Beginner</div>
+          <div class="track-title">🐣 Python Beginner</div>
+          <div class="track-sub">8 modules · Variables → Functions → Data Structures → Strings</div>
+        </div>
+        <a class="open-btn" href="py-beginner.html" target="_blank">Open Course →</a>
+      </div>
+      <p class="track-desc">Start from zero. Learn how Python thinks, how to store data, make decisions, repeat tasks, write functions, and work with all four core data structures. Every concept tied to real-world examples.</p>
+      <div class="pill-row"><span class="pill">variables</span><span class="pill">data types</span><span class="pill">operators</span><span class="pill">control flow</span><span class="pill">loops</span><span class="pill">functions</span><span class="pill">list dict set tuple</span><span class="pill">strings</span></div>
+      <div class="mod-row"><span class="mod">01 Hello Python</span><span class="mod">02 Variables &amp; Types</span><span class="mod">03 Operators</span><span class="mod">04 Control Flow</span><span class="mod">05 Loops</span><span class="mod">06 Functions</span><span class="mod">07 Data Structures</span><span class="mod">08 Strings</span></div>
+      <div class="badge-row"><span class="badge b1">🎥 Live Walkthrough</span><span class="badge b2">🧩 Scaffolded</span><span class="badge b3">🔄 Flipped</span><span class="badge b4">⚡ Real Data</span></div>
+    </div>
+  </div>
+
+  <div class="track-card">
+    <div class="track-stripe ts2"></div>
+    <div class="track-body">
+      <div class="track-top">
+        <div class="track-meta">
+          <div class="track-num">Track 02 · Intermediate</div>
+          <div class="track-title">⚡ Python Intermediate</div>
+          <div class="track-sub">8 modules · Comprehensions → OOP → Decorators → Modules</div>
+        </div>
+        <a class="open-btn" href="py-intermediate.html" target="_blank">Open Course →</a>
+      </div>
+      <p class="track-desc">Write Pythonic code. Master list comprehensions, build classes with inheritance, handle errors gracefully, read and write files, use decorators, and structure real projects with modules and pip.</p>
+      <div class="pill-row"><span class="pill">comprehensions</span><span class="pill">lambda</span><span class="pill">map/filter</span><span class="pill">OOP</span><span class="pill">inheritance</span><span class="pill">try/except</span><span class="pill">file I/O</span><span class="pill">decorators</span><span class="pill">pip</span></div>
+      <div class="mod-row"><span class="mod">01 List Comprehensions</span><span class="mod">02 *args **kwargs</span><span class="mod">03 OOP Classes</span><span class="mod">04 Inheritance</span><span class="mod">05 Error Handling</span><span class="mod">06 File I/O</span><span class="mod">07 Decorators</span><span class="mod">08 Modules &amp; pip</span></div>
+      <div class="badge-row"><span class="badge b1">🎥 Live Walkthrough</span><span class="badge b2">🧩 Scaffolded</span><span class="badge b3">🔄 Flipped</span><span class="badge b4">⚡ Real Data</span></div>
+    </div>
+  </div>
+
+  <div class="track-card">
+    <div class="track-stripe ts3"></div>
+    <div class="track-body">
+      <div class="track-top">
+        <div class="track-meta">
+          <div class="track-num">Track 03 · Advanced</div>
+          <div class="track-title">∞ Python Advanced</div>
+          <div class="track-sub">8 modules · Generators → Async → Metaclasses → Testing</div>
+        </div>
+        <a class="open-btn" href="py-advanced.html" target="_blank">Open Course →</a>
+      </div>
+      <p class="track-desc">Write production-grade Python. Lazy generators for large data, async/await for concurrent I/O, metaclasses and protocols, type hints, threading vs multiprocessing, design patterns, and pytest testing.</p>
+      <div class="pill-row"><span class="pill">generators</span><span class="pill">yield</span><span class="pill">asyncio</span><span class="pill">aiohttp</span><span class="pill">metaclasses</span><span class="pill">type hints</span><span class="pill">protocols</span><span class="pill">threading</span><span class="pill">pytest</span></div>
+      <div class="mod-row"><span class="mod">01 Generators</span><span class="mod">02 Context Managers</span><span class="mod">03 asyncio</span><span class="mod">04 Metaclasses</span><span class="mod">05 Type Hints</span><span class="mod">06 Concurrency</span><span class="mod">07 Design Patterns</span><span class="mod">08 Testing</span></div>
+      <div class="badge-row"><span class="badge b1">🎥 Live Walkthrough</span><span class="badge b2">🧩 Scaffolded</span><span class="badge b3">🔄 Flipped</span><span class="badge b4">⚡ Real Data</span></div>
+    </div>
+  </div>
+
+  <div class="track-card">
+    <div class="track-stripe ts4"></div>
+    <div class="track-body">
+      <div class="track-top">
+        <div class="track-meta">
+          <div class="track-num">Track 04 · Applications</div>
+          <div class="track-title">🚀 Python Applications</div>
+          <div class="track-sub">8 projects · Scraper → API → ML → Bot → AI → Docker</div>
+        </div>
+        <a class="open-btn" href="py-application.html" target="_blank">Open Course →</a>
+      </div>
+      <p class="track-desc">Build real things. A web scraper, FastAPI REST service, pandas analytics dashboard, scikit-learn ML pipeline, GitHub Actions automation, Telegram bot, Claude AI integration, and Docker deployment.</p>
+      <div class="pill-row"><span class="pill">requests</span><span class="pill">BeautifulSoup</span><span class="pill">FastAPI</span><span class="pill">pandas</span><span class="pill">sklearn</span><span class="pill">github actions</span><span class="pill">telegram bot</span><span class="pill">anthropic API</span><span class="pill">docker</span></div>
+      <div class="mod-row"><span class="mod">01 Web Scraper</span><span class="mod">02 FastAPI</span><span class="mod">03 Data Analysis</span><span class="mod">04 ML Pipeline</span><span class="mod">05 Automation</span><span class="mod">06 Telegram Bot</span><span class="mod">07 AI App (Claude)</span><span class="mod">08 Docker Deploy</span></div>
+      <div class="badge-row"><span class="badge b1">🎥 Live Walkthrough</span><span class="badge b2">🧩 Scaffolded</span><span class="badge b3">🔄 Flipped</span><span class="badge b4">⚡ Real Data</span><span class="badge b5">🚀 Projects</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="path">
+  <span class="section-label">Recommended Learning Path</span>
+  <div class="path-row">
+    <div class="path-step"><div class="path-circle pc1">🐣</div><div class="path-name">Beginner</div><div class="path-sub">Start here</div></div>
+    <div class="path-line"></div>
+    <div class="path-step"><div class="path-circle pc2">⚡</div><div class="path-name">Intermediate</div><div class="path-sub">After Beginner</div></div>
+    <div class="path-line"></div>
+    <div class="path-step"><div class="path-circle pc3">∞</div><div class="path-name">Advanced</div><div class="path-sub">Production Python</div></div>
+    <div class="path-line"></div>
+    <div class="path-step"><div class="path-circle pc4">🚀</div><div class="path-name">Applications</div><div class="path-sub">Build & Deploy</div></div>
+  </div>
+</div>
+
+<footer>Built with MIT Open Learning pedagogical methods · <span>Egozy · Bazant · Demaine · Noe</span> · Designed for GitHub Pages delivery</footer>
+</body>
+</html>
