@@ -1,1 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel — Python Crash Course</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#070a11;--s1:#0c1018;--s2:#111827;--border:#1f2937;--b2:#2d3748;--accent:#4f8ef7;--success:#10b981;--warning:#f59e0b;--error:#f43f5e;--purple:#8b5cf6;--tx:#f1f5fd;--t2:#8899bb;--t3:#3d4f6b;--mono:'JetBrains Mono',monospace;--font:'DM Sans',sans-serif}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100vh}
+.topbar{height:60px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100}
+.tb-left{display:flex;align-items:center;gap:16px}
+.back-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px;font-size:13px;font-weight:500;color:var(--t2);background:none;border:1px solid var(--border);cursor:pointer;transition:all .15s;text-decoration:none;font-family:var(--font)}
+.back-btn:hover{color:var(--tx);border-color:var(--b2)}
+.tb-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.admin-badge{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:20px;background:rgba(139,92,246,.15);color:var(--purple);border:1px solid rgba(139,92,246,.25)}
+.tb-right{display:flex;align-items:center;gap:12px}
+.session-info{font-size:12px;color:var(--t3);font-family:var(--mono)}
+.logout-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;color:var(--error);background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);cursor:pointer;transition:all .15s;font-family:var(--font)}
+.logout-btn:hover{background:rgba(244,63,94,.15)}
+.main{max-width:1100px;margin:0 auto;padding:32px 28px}
 
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:18px 20px;transition:border-color .2s}
+.stat-card:hover{border-color:var(--b2)}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:8px}
+.stat-value{font-size:28px;font-weight:800;font-family:var(--mono)}
+.sv-total{color:var(--accent)}
+.sv-active{color:var(--success)}
+.sv-admin{color:var(--purple)}
+.sv-new{color:var(--warning)}
+
+/* Section */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.add-btn{display:flex;align-items:center;gap:6px;padding:8px 18px;background:var(--accent);border:none;border-radius:8px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;font-family:var(--font)}
+.add-btn:hover{background:#3a7aee;transform:translateY(-1px)}
+
+/* Table */
+.table-wrap{background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:28px}
+table{width:100%;border-collapse:collapse}
+thead th{padding:12px 18px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+tbody td{padding:14px 18px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04)}
+tbody tr:last-child td{border-bottom:none}
+.user-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.user-info{display:flex;align-items:center;gap:12px}
+.user-name{font-weight:600;margin-bottom:2px}
+.user-email{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.role-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;font-family:var(--mono)}
+.rb-admin{background:rgba(139,92,246,.15);color:var(--purple);border:1px solid rgba(139,92,246,.25)}
+.rb-student{background:rgba(16,185,129,.1);color:var(--success);border:1px solid rgba(16,185,129,.2)}
+.status-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;font-family:var(--mono)}
+.sb-active{background:rgba(16,185,129,.1);color:var(--success)}
+.sb-inactive{background:rgba(244,63,94,.08);color:var(--error)}
+.last-login{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.action-row{display:flex;gap:6px}
+.act-btn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid;font-family:var(--mono)}
+.act-edit{background:rgba(79,142,247,.08);color:var(--accent);border-color:rgba(79,142,247,.2)}
+.act-edit:hover{background:rgba(79,142,247,.15)}
+.act-toggle{background:rgba(245,158,11,.08);color:var(--warning);border-color:rgba(245,158,11,.2)}
+.act-toggle:hover{background:rgba(245,158,11,.15)}
+.act-del{background:rgba(244,63,94,.08);color:var(--error);border-color:rgba(244,63,94,.2)}
+.act-del:hover{background:rgba(244,63,94,.15)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:999;display:none;align-items:center;justify-content:center;padding:24px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--s2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:460px;padding:28px;animation:modalIn .3s cubic-bezier(.4,0,.2,1);position:relative;max-height:90vh;overflow-y:auto}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--t2);margin-bottom:24px}
+.modal-close{position:absolute;top:18px;right:18px;background:none;border:none;color:var(--t3);font-size:18px;cursor:pointer;transition:color .2s;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.modal-close:hover{color:var(--tx);background:var(--border)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.field input,.field select{width:100%;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;font-size:14px;color:var(--tx);font-family:var(--font);transition:all .2s;outline:none}
+.field input:focus,.field select:focus{border-color:var(--accent);background:rgba(79,142,247,.05);box-shadow:0 0 0 3px rgba(79,142,247,.1)}
+.field select option{background:var(--s2);color:var(--tx)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pw-field{position:relative}
+.pw-field input{padding-right:44px}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px}
+.modal-actions{display:flex;gap:10px;margin-top:24px}
+.btn-modal{flex:1;padding:11px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;font-family:var(--font)}
+.btn-cancel{background:none;border:1px solid var(--border);color:var(--t2)}
+.btn-cancel:hover{border-color:var(--b2);color:var(--tx)}
+.btn-save{background:var(--accent);border:none;color:#fff;box-shadow:0 4px 14px rgba(79,142,247,.3)}
+.btn-save:hover{background:#3a7aee;transform:translateY(-1px)}
+.modal-err{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--error);margin-bottom:14px;display:none}
+.modal-err.show{display:block}
+
+/* Password strength */
+.pw-strength{margin-top:6px;height:3px;border-radius:2px;background:var(--border);overflow:hidden}
+.pw-strength-fill{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0%}
+.pw-hint{font-size:11px;color:var(--t3);margin-top:4px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;animation:toastIn .3s ease;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.toast-ok{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:var(--success)}
+.toast-err{background:rgba(244,63,94,.12);border:1px solid rgba(244,63,94,.3);color:var(--error)}
+
+/* Change pw modal */
+.pw-change-label{font-size:12px;color:var(--t3);text-align:center;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="tb-left">
+    <a class="back-btn" href="index.html">← Dashboard</a>
+    <div class="tb-title">🛡️ Admin Panel <span class="admin-badge">admin only</span></div>
+  </div>
+  <div class="tb-right">
+    <span class="session-info" id="sessionInfo"></span>
+    <button class="logout-btn" onclick="doLogout()">⏻ Sign Out</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="stats-row" id="statsRow"></div>
+
+  <div class="section-header">
+    <div class="section-title">👥 User Accounts <span id="userCount" style="font-size:13px;color:var(--t3);font-weight:400"></span></div>
+    <button class="add-btn" onclick="openAddModal()">+ Add User</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>User</th><th>Role</th><th>Status</th><th>Last Login</th><th>Created</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="userTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    <div class="modal-title" id="modalTitle">Add New User</div>
+    <div class="modal-sub" id="modalSub">Create a new account with course access</div>
+    <div class="modal-err" id="modalErr"></div>
+    <div class="field-row">
+      <div class="field"><label>First + Last Name</label><input type="text" id="newName" placeholder="Full name"></div>
+      <div class="field"><label>Username</label><input type="text" id="newUser" placeholder="e.g. johndoe" spellcheck="false" autocomplete="off"></div>
+    </div>
+    <div class="field"><label>Email</label><input type="email" id="newEmail" placeholder="email@example.com"></div>
+    <div class="field">
+      <label>Role</label>
+      <select id="newRole">
+        <option value="student">Student — Course access only</option>
+        <option value="admin">Admin — Full access + user management</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="pw-field">
+        <input type="password" id="newPw" placeholder="Min 8 chars, 1 upper, 1 number" oninput="checkStrength(this.value)" autocomplete="new-password">
+        <button class="pw-toggle" type="button" onclick="toggleField('newPw',this)">👁</button>
+      </div>
+      <div class="pw-strength"><div class="pw-strength-fill" id="pwBar"></div></div>
+      <div class="pw-hint" id="pwHint">Enter a strong password</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal btn-cancel" onclick="closeModal('addModal')">Cancel</button>
+      <button class="btn-modal btn-save" onclick="saveUser()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal-overlay" id="pwModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('pwModal')">✕</button>
+    <div class="modal-title">Change Password</div>
+    <div class="pw-change-label" id="pwModalFor"></div>
+    <div class="modal-err" id="pwModalErr"></div>
+    <div class="field">
+      <label>New Password</label>
+      <div class="pw-field">
+        <input type="password" id="changePwInput" placeholder="New password" autocomplete="new-password">
+        <button class="pw-toggle" type="button" onclick="toggleField('changePwInput',this)">👁</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Confirm Password</label>
+      <div class="pw-field">
+        <input type="password" id="changePwConfirm" placeholder="Confirm new password" autocomplete="new-password">
+        <button class="pw-toggle" type="button" onclick="toggleField('changePwConfirm',this)">👁</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal btn-cancel" onclick="closeModal('pwModal')">Cancel</button>
+      <button class="btn-modal btn-save" onclick="doChangePassword()">Update Password</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const AUTH_USERS_KEY='py_users',AUTH_SESSION_KEY='py_session';
+let editingUser=null;
+
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str+'py_salt_2025'));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function getUsers(){try{return JSON.parse(localStorage.getItem(AUTH_USERS_KEY))||[];}catch{return[];}}
+function saveUsers(u){localStorage.setItem(AUTH_USERS_KEY,JSON.stringify(u));}
+function getSession(){try{return JSON.parse(sessionStorage.getItem(AUTH_SESSION_KEY));}catch{return null;}}
+function doLogout(){sessionStorage.removeItem(AUTH_SESSION_KEY);window.location.href='login.html';}
+
+function requireAdmin(){
+  const s=getSession();
+  if(!s){window.location.href='login.html';return null;}
+  if(Date.now()-s.loginTime>8*60*60*1000){doLogout();return null;}
+  if(s.role!=='admin'){window.location.href='index.html';return null;}
+  return s;
+}
+
+const session=requireAdmin();
+if(session){
+  document.getElementById('sessionInfo').textContent='Signed in as '+session.username;
+  buildPage();
+}
+
+function buildPage(){
+  const users=getUsers();
+  const active=users.filter(u=>u.active).length;
+  const admins=users.filter(u=>u.role==='admin').length;
+  const today=new Date().toDateString();
+  const newToday=users.filter(u=>u.created&&new Date(u.created).toDateString()===today).length;
+
+  document.getElementById('statsRow').innerHTML=[
+    ['Total Users',users.length,'sv-total','👤'],
+    ['Active',active,'sv-active','✅'],
+    ['Admins',admins,'sv-admin','🛡️'],
+    ['Added Today',newToday,'sv-new','🆕'],
+  ].map(([l,v,cls,ic])=>`<div class="stat-card"><div class="stat-label">${ic} ${l}</div><div class="stat-value ${cls}">${v}</div></div>`).join('');
+
+  document.getElementById('userCount').textContent=`(${users.length})`;
+
+  const avatarColors=['#4f8ef7','#8b5cf6','#10b981','#f59e0b','#f43f5e','#06b6d4','#ec4899'];
+  document.getElementById('userTable').innerHTML=users.map((u,idx)=>{
+    const col=avatarColors[idx%avatarColors.length];
+    const initials=u.name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    const ll=u.lastLogin?new Date(u.lastLogin).toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Never';
+    const cr=new Date(u.created).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    const isSelf=session&&session.username===u.username;
+    return `<tr>
+      <td><div class="user-info">
+        <div class="user-avatar" style="background:${col}20;color:${col};border:1px solid ${col}30">${initials}</div>
+        <div><div class="user-name">${u.name}${isSelf?' <span style="font-size:10px;color:var(--t3)">(you)</span>':''}</div><div class="user-email">${u.email||u.username}</div></div>
+      </div></td>
+      <td><span class="role-badge rb-${u.role}">${u.role}</span></td>
+      <td><span class="status-badge sb-${u.active?'active':'inactive'}">${u.active?'● Active':'○ Inactive'}</span></td>
+      <td><span class="last-login">${ll}</span></td>
+      <td><span class="last-login">${cr}</span></td>
+      <td><div class="action-row">
+        <button class="act-btn act-edit" onclick="openPwModal('${u.username}')">🔑 Password</button>
+        ${!isSelf?`<button class="act-btn act-toggle" onclick="toggleUser('${u.username}')">${u.active?'Deactivate':'Activate'}</button>`:''}
+        ${!isSelf?`<button class="act-btn act-del" onclick="deleteUser('${u.username}')">🗑 Delete</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openAddModal(){
+  editingUser=null;
+  ['newName','newUser','newEmail','newPw'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('newRole').value='student';
+  document.getElementById('modalTitle').textContent='Add New User';
+  document.getElementById('modalSub').textContent='Create a new account with course access';
+  document.getElementById('modalErr').classList.remove('show');
+  document.getElementById('pwBar').style.cssText='width:0%;background:transparent';
+  document.getElementById('pwHint').textContent='Enter a strong password';
+  document.getElementById('addModal').classList.add('show');
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+function toggleField(id,btn){
+  const el=document.getElementById(id);
+  el.type=el.type==='password'?'text':'password';
+  btn.textContent=el.type==='password'?'👁':'🙈';
+}
+
+function checkStrength(pw){
+  const bar=document.getElementById('pwBar');
+  const hint=document.getElementById('pwHint');
+  let score=0,hints=[];
+  if(pw.length>=8)score++;else hints.push('8+ chars');
+  if(/[A-Z]/.test(pw))score++;else hints.push('1 uppercase');
+  if(/[a-z]/.test(pw))score++;else hints.push('1 lowercase');
+  if(/[0-9]/.test(pw))score++;else hints.push('1 number');
+  if(/[^A-Za-z0-9]/.test(pw))score++;
+  const pcts=['0%','20%','40%','60%','80%','100%'];
+  const cols=['transparent','#f43f5e','#f59e0b','#fbbf24','#10b981','#06d6a0'];
+  const labels=['','Weak','Fair','Good','Strong','Excellent!'];
+  bar.style.width=pcts[score];bar.style.background=cols[score];
+  hint.textContent=score===5?'Excellent password!':(score>2?labels[score]+' — add: '+hints.join(', '):'Needs: '+hints.join(', '));
+  hint.style.color=cols[score]||'var(--t3)';
+}
+
+async function saveUser(){
+  const name=document.getElementById('newName').value.trim();
+  const uname=document.getElementById('newUser').value.trim();
+  const email=document.getElementById('newEmail').value.trim();
+  const role=document.getElementById('newRole').value;
+  const pw=document.getElementById('newPw').value;
+  const errEl=document.getElementById('modalErr');
+  const showErr=msg=>{errEl.textContent=msg;errEl.classList.add('show');};
+  errEl.classList.remove('show');
+  if(!name||!uname||!pw){showErr('Name, username and password are required.');return;}
+  if(pw.length<8){showErr('Password must be at least 8 characters.');return;}
+  if(!/[A-Z]/.test(pw)){showErr('Password needs at least one uppercase letter.');return;}
+  if(!/[0-9]/.test(pw)){showErr('Password needs at least one number.');return;}
+  const users=getUsers();
+  if(users.find(u=>u.username.toLowerCase()===uname.toLowerCase())){showErr('Username "'+uname+'" already exists.');return;}
+  const h=await sha256(pw);
+  users.push({username:uname,passwordHash:h,role,name,email:email||uname+'@pycourse.com',created:new Date().toISOString(),active:true,lastLogin:null});
+  saveUsers(users);
+  closeModal('addModal');
+  buildPage();
+  toast('User '+name+' created successfully!','ok');
+}
+
+function openPwModal(username){
+  editingUser=username;
+  document.getElementById('pwModalFor').textContent='Changing password for: '+username;
+  document.getElementById('changePwInput').value='';
+  document.getElementById('changePwConfirm').value='';
+  document.getElementById('pwModalErr').classList.remove('show');
+  document.getElementById('pwModal').classList.add('show');
+}
+
+async function doChangePassword(){
+  const pw=document.getElementById('changePwInput').value;
+  const conf=document.getElementById('changePwConfirm').value;
+  const errEl=document.getElementById('pwModalErr');
+  const showErr=msg=>{errEl.textContent=msg;errEl.classList.add('show');};
+  errEl.classList.remove('show');
+  if(pw.length<8){showErr('Password must be at least 8 characters.');return;}
+  if(pw!==conf){showErr('Passwords do not match.');return;}
+  const users=getUsers();
+  const u=users.find(u=>u.username===editingUser);
+  if(u){u.passwordHash=await sha256(pw);saveUsers(users);}
+  closeModal('pwModal');
+  toast('Password updated for '+editingUser,'ok');
+}
+
+function toggleUser(username){
+  const users=getUsers();
+  const u=users.find(u=>u.username===username);
+  if(u){u.active=!u.active;saveUsers(users);buildPage();toast(username+' '+(u.active?'activated':'deactivated'),'ok');}
+}
+
+function deleteUser(username){
+  if(!confirm('Permanently delete user "'+username+'"? This cannot be undone.'))return;
+  const users=getUsers().filter(u=>u.username!==username);
+  saveUsers(users);buildPage();toast('User '+username+' deleted.','ok');
+}
+
+let toastTimer;
+function toast(msg,type='ok'){
+  const old=document.querySelector('.toast');
+  if(old)old.remove();
+  clearTimeout(toastTimer);
+  const t=document.createElement('div');
+  t.className='toast toast-'+type;
+  t.innerHTML=(type==='ok'?'✅ ':'❌ ')+msg;
+  document.body.appendChild(t);
+  toastTimer=setTimeout(()=>t.style.cssText='opacity:0;transition:opacity .3s',2700);
+  setTimeout(()=>{if(t.parentNode)t.remove();},3100);
+}
+</script>
+</body>
+</html>
